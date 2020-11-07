@@ -1,41 +1,203 @@
 ﻿using Dul.Articles;
+using Dul.Domain.Common;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EntryApp.Models
 {
+    /// <summary>
+    /// [4] Repository Class: ADO.NET or Dapper(Micro ORM) or Entity Framework Core(ORM)
+    /// ~Repository, ~Provider, ~Data
+    /// </summary>
     public class EntryRepository : IEntryRepository
     {
-        public Task<Entry> AddAsync(Entry model)
+        private readonly EntryAppDbContext _context;
+        private readonly ILogger _logger;
+
+        public EntryRepository(EntryAppDbContext context, ILoggerFactory loggerFactory)
         {
-            throw new NotImplementedException();
+            this._context = context;
+            this._logger = loggerFactory.CreateLogger(nameof(EntryRepository));
         }
 
-        public Task<bool> DeleteAsync(long id)
+        #region [4][1] 입력: AddAsync
+        //[4][1] 입력: AddAsync
+        public async Task<Entry> AddAsync(Entry model)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                _context.Entries.Add(model);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"ERROR({nameof(AddAsync)}): {e.Message}");
+            }
 
-        public Task<IEnumerable<Entry>> GetAllAsync()
-        {
-            throw new NotImplementedException();
+            return model;
         }
+        #endregion
 
-        public Task<ArticleSet<Entry, long>> GetByAsync<TParentIdentifier>(FilterOptions<TParentIdentifier> options)
+        #region [4][2] 출력: GetAllAsync
+        //[4][2] 출력: GetAllAsync
+        public async Task<IEnumerable<Entry>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            // 학습 목적으로... InMemory 데이터베이스에선 사용 금지 
+            //return await _context.Entries.FromSqlRaw<Entry>("Select * From dbo.Entries Order By Id Desc") 
+            return await _context.Entries.OrderByDescending(m => m.Id)
+                //.Include(m => m.EntriesComments)
+                .ToListAsync();
         }
+        #endregion
 
-        public Task<Entry> GetByIdAsync(long id)
+        #region [4][3] 상세: GetByIdAsync
+        //[4][3] 상세: GetByIdAsync
+        public async Task<Entry> GetByIdAsync(long id)
         {
-            throw new NotImplementedException();
-        }
+            var model = await _context.Entries
+                //.Include(m => m.EntriesComments)
+                .SingleOrDefaultAsync(m => m.Id == id);
 
-        public Task<bool> UpdateAsync(Entry model)
-        {
-            throw new NotImplementedException();
+            return model;
         }
+        #endregion
+
+        #region [4][4] 수정: UpdateAsync
+        //[4][4] 수정: UpdateAsync
+        public async Task<bool> UpdateAsync(Entry model)
+        {
+            try
+            {
+                //_context.Entries.Attach(model);
+                //_context.Entry(model).State = EntityState.Modified;
+                _context.Update(model);
+                return (await _context.SaveChangesAsync() > 0 ? true : false);
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"ERROR({nameof(UpdateAsync)}): {e.Message}");
+            }
+
+            return false;
+        }
+        #endregion
+
+        #region [4][5] 삭제: DeleteAsync
+        //[4][5] 삭제
+        public async Task<bool> DeleteAsync(long id)
+        {
+            //var model = await _context.Entries.SingleOrDefaultAsync(m => m.Id == id);
+            try
+            {
+                var model = await _context.Entries.FindAsync(id);
+                //_context.Entries.Remove(model);
+                _context.Remove(model);
+                return (await _context.SaveChangesAsync() > 0 ? true : false);
+            }
+            catch (Exception ಠ_ಠ) // Disapproval Look
+            {
+                _logger?.LogError($"ERROR({nameof(DeleteAsync)}): {ಠ_ಠ.Message}");
+            }
+
+            return false;
+        }
+        #endregion
+
+        #region [4][6] 검색: GetByAsync()
+        //[4][6] 검색: GetByAsync()
+        public async Task<ArticleSet<Entry, long>> GetByAsync<TParentIdentifier>(
+            FilterOptions<TParentIdentifier> options)
+        {
+            //var items = from m in _context.Entries select m; // 쿼리 구문(Query Syntax)
+            //var items = _context.Entries.Select(m => m); // 메서드 구문(Method Syntax)
+            var items = _context.Entries.AsQueryable();
+
+            #region ParentBy: 특정 부모 키 값(int, string)에 해당하는 리스트인지 확인
+            if (options.ChildMode)
+            {
+                // ParentBy 
+                if (options.ParentIdentifier is int parentId && parentId != 0)
+                {
+                    //items = items.Where(m => m.ParentId == parentId);
+                }
+                else if (options.ParentIdentifier is string parentKey && !string.IsNullOrEmpty(parentKey))
+                {
+                    //items = items.Where(m => m.ParentKey == parentKey);
+                }
+            }
+            #endregion
+
+            #region Search Mode: SearchField와 SearchQuery에 해당하는 데이터 검색
+            if (options.SearchMode)
+            {
+                // Search Mode
+                if (!string.IsNullOrEmpty(options.SearchQuery))
+                {
+                    if (options.SearchField == "Name")
+                    {
+                        // Name
+                        items = items.Where(m => m.Name.Contains(options.SearchQuery));
+                    }
+                    else if (options.SearchField == "Title")
+                    {
+                        // Title
+                        items = items.Where(m => m.Title.Contains(options.SearchQuery));
+                    }
+                    else if (options.SearchField == "Content")
+                    {
+                        // Title
+                        items = items.Where(m => m.Content.Contains(options.SearchQuery));
+                    }
+                    else
+                    {
+                        // All: 기타 더 검색이 필요한 컬럼이 있다면 추가 가능
+                        items = items.Where(m => m.Name.Contains(options.SearchQuery) || m.Title.Contains(options.SearchQuery) || m.Content.Contains(options.SearchQuery));
+                    }
+                }
+            }
+            #endregion
+
+            // 총 레코드 수 계산
+            var totalCount = await items.CountAsync();
+
+            #region Sorting: 어떤 열에 대해 정렬(None, Asc, Desc)할 것인지 원하는 문자열로 지정
+            if (options.SortMode)
+            {
+                // Sorting
+                foreach (var sf in options.SortFields)
+                {
+                    switch ($"{sf.Key}{sf.Value}")
+                    {
+                        case "NameAsc":
+                            items = items.OrderBy(m => m.Name);
+                            break;
+                        case "NameDesc":
+                            items = items.OrderByDescending(m => m.Name);
+                            break;
+                        case "TitleAsc":
+                            items = items.OrderBy(m => m.Title);
+                            break;
+                        case "TitleDesc":
+                            items = items.OrderByDescending(m => m.Title);
+                            break;
+                        default:
+                            items = items.OrderByDescending(m => m.Id); 
+                            break;
+                    }
+                }
+            }
+            #endregion
+
+            // Paging
+            items = items.Skip(options.PageIndex * options.PageSize).Take(options.PageSize);
+            
+            return new ArticleSet<Entry, long>(await items.ToListAsync(), totalCount);
+        }
+        #endregion
     }
 
     public class EntryRepositoryAdoNet
