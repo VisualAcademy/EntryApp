@@ -165,7 +165,7 @@ namespace EntryApp.Models
             var totalCount = await items.CountAsync();
 
             #region Sorting: 어떤 열에 대해 정렬(None, Asc, Desc)할 것인지 원하는 문자열로 지정
-            if (options.SortMode)
+            if (options.SortMode && options.SortFields != null)
             {
                 // Sorting
                 foreach (var sf in options.SortFields)
@@ -190,6 +190,10 @@ namespace EntryApp.Models
                     }
                 }
             }
+            else
+            {
+                items = items.OrderByDescending(m => m.Id); 
+            }
             #endregion
 
             // Paging
@@ -197,6 +201,22 @@ namespace EntryApp.Models
             
             return new ArticleSet<Entry, long>(await items.ToListAsync(), totalCount);
         }
+        #endregion
+
+        #region [4][7] 페이징: PagingAsync()
+        //[4][7] 페이징: PagingAsync()
+        public async Task<PagingResult<Entry>> GetAllAsync(int pageIndex, int pageSize)
+        {
+            var totalRecords = await _context.Entries.CountAsync();
+            var models = await _context.Entries
+                .OrderByDescending(m => m.Id)
+                //.Include(m => m.EntriesComments)
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagingResult<Entry>(models, totalRecords);
+        } 
         #endregion
     }
 
