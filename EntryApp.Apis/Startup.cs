@@ -1,7 +1,6 @@
 ﻿using EntryApp.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,21 +26,19 @@ namespace EntryApp.Apis
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EntryApp.Apis", Version = "v1" });
             });
 
+            #region CORS
+            //[CORS] Angular, React 등의 SPA를 위한 CORS(Cross Origin Resource Sharing) 설정 1/2
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("https://localhost:3000"); // [!] Trailing Slash
+                });
+            }); 
+            #endregion
+
             // EntryApp 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
-            AddDependencyInjectionContainerForEntryApp(services);
-        }
-
-        /// <summary>
-        /// EntryApp 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
-        /// </summary>
-        private void AddDependencyInjectionContainerForEntryApp(IServiceCollection services)
-        {
-            // EntryAppDbContext.cs Inject: New DbContext Add
-            services.AddEntityFrameworkSqlServer().AddDbContext<EntryAppDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
-            // IEntryRepository.cs Inject: DI Container에 서비스(리포지토리) 등록 
-            services.AddTransient<IEntryRepository, EntryRepository>();
+            services.AddDependencyInjectionContainerForEntryApp(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +54,11 @@ namespace EntryApp.Apis
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            #region CORS
+            //[CORS] Angular, React 등의 SPA를 위한 CORS(Cross Origin Resource Sharing) 설정 2/2
+            app.UseCors(); // 반드시 UseRouting() 뒤에 와야 함  
+            #endregion
 
             app.UseAuthorization();
 
