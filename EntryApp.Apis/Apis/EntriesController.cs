@@ -24,7 +24,7 @@ namespace EntryApp.Apis.Controllers
         #region 입력
         // 입력
         // POST api/Entries
-        [HttpPost] // PostMapping
+        [HttpPost] // @PostMapping
         public async Task<IActionResult> AddAsync([FromBody] Entry dto)
         {
             if (!ModelState.IsValid)
@@ -127,7 +127,7 @@ namespace EntryApp.Apis.Controllers
         #region 수정
         // 수정
         // PUT api/Entries/123
-        [HttpPut("{id}")]
+        [HttpPut("{id}")] // @PutMapping
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] Entry dto)
         {
             if (dto == null)
@@ -174,7 +174,7 @@ namespace EntryApp.Apis.Controllers
         #region 삭제
         // 삭제
         // DELETE api/Entries/1
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}")] // @DeleteMapping 
         public async Task<IActionResult> DeleteAsync(int id)
         {
             try
