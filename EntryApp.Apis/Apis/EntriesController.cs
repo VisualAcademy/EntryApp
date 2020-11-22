@@ -66,7 +66,7 @@ namespace EntryApp.Apis.Controllers
                 else
                 {
                     // GetById 액션 이름 사용해서 입력된 데이터 반환 
-                    return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
+                    return CreatedAtAction(nameof(GetEntryById), new { id = model.Id }, model);
                 }
             }
             catch (Exception e)
@@ -103,8 +103,8 @@ namespace EntryApp.Apis.Controllers
         #region 상세
         // 상세
         // GET api/Entries/123
-        [HttpGet("{id:int}", Name = "GetEntryById")] // Name 속성으로 RouteName 설정
-        public async Task<IActionResult> GetById([FromRoute] int id)
+        [HttpGet("{id:int}", Name = nameof(GetEntryById))] // Name 속성으로 RouteName 설정
+        public async Task<IActionResult> GetEntryById([FromRoute] int id)
         {
             try
             {
