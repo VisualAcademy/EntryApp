@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,11 +57,11 @@ namespace EntryApp.Apis.Controllers
                 }
                 else if (DateTime.Now.Second % 3 == 0)
                 {
-                    return CreatedAtRoute("GetEntryById", new { id = model.Id }, model); // Status: 201 Created
+                    return CreatedAtRoute(nameof(GetEntryById), new { id = model.Id }, model); // Status: 201 Created
                 }
                 else if (DateTime.Now.Second % 2 == 0)
                 {
-                    var uri = Url.Link("GetEntryById", new { id = model.Id });
+                    var uri = Url.Link(nameof(GetEntryById), new { id = model.Id });
                     return Created(uri, model); // 201 Created
                 }
                 else
@@ -148,7 +147,7 @@ namespace EntryApp.Apis.Controllers
             {
                 origin.Name = dto.Name;
                 origin.Title = dto.Title;
-                origin.Content = dto.Content; 
+                origin.Content = dto.Content;
                 // --TODO--
             }
             // </>
