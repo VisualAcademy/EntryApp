@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -81,7 +83,7 @@ namespace EntryApp.Apis.Controllers
         // 출력
         // GET api/Entries
         [HttpGet] // [HttpGet("[action]")] // @GetMapping
-        public async Task<IActionResult> GetAll()
+        public async ValueTask<ActionResult<IEnumerable<Entry>>> GetAll()
         {
             try
             {
@@ -90,7 +92,7 @@ namespace EntryApp.Apis.Controllers
                 {
                     return new NoContentResult(); // 참고용 코드
                 }
-                return Ok(models); // 200 OK
+                return new JsonResult(models); //return Ok(models); // 200 OK
             }
             catch (Exception e)
             {
