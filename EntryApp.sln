@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntryApp.Models", "EntryApp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntryApp.Models.Tests", "EntryApp.Models.Tests\EntryApp.Models.Tests.csproj", "{BB052258-67BD-4671-BD25-15FDEDBDB61A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntryApp.Apis", "EntryApp.Apis\EntryApp.Apis.csproj", "{5CEE8387-4710-43CE-9B6E-2593FACE67EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{BB052258-67BD-4671-BD25-15FDEDBDB61A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB052258-67BD-4671-BD25-15FDEDBDB61A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB052258-67BD-4671-BD25-15FDEDBDB61A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CEE8387-4710-43CE-9B6E-2593FACE67EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CEE8387-4710-43CE-9B6E-2593FACE67EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CEE8387-4710-43CE-9B6E-2593FACE67EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CEE8387-4710-43CE-9B6E-2593FACE67EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
