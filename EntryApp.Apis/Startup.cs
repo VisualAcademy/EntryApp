@@ -34,7 +34,8 @@ namespace EntryApp.Apis
             #endregion
 
             // EntryApp 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
-            services.AddDependencyInjectionContainerForEntryApp(Configuration);
+            //services.AddDependencyInjectionContainerForEntryApp(Configuration);
+            services.AddDependencyInjectionContainerForEntryApp(Configuration.GetConnectionString("DefaultConnection"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -18,5 +18,14 @@ namespace EntryApp.Models
             // IEntryRepository.cs Inject: DI Container에 서비스(리포지토리) 등록 
             services.AddTransient<IEntryRepository, EntryRepository>();
         }
+        public static void AddDependencyInjectionContainerForEntryApp(this IServiceCollection services, string connectionString)
+        {
+            // EntryAppDbContext.cs Inject: New DbContext Add
+            services.AddEntityFrameworkSqlServer().AddDbContext<EntryAppDbContext>(options =>
+                options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+
+            // IEntryRepository.cs Inject: DI Container에 서비스(리포지토리) 등록 
+            services.AddTransient<IEntryRepository, EntryRepository>();
+        }
     }
 }
