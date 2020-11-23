@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Dul.EntryApp.Models</PackageId>
+    <Authors>RedPlus</Authors>
+    <Company>Hawaso</Company>
+    <Product>Dul.EntryApp.Models</Product>
+    <PackageProjectUrl>https://github.com/VisualAcademy/EntryApp</PackageProjectUrl>
+    <Description>EntryApp.Models CRUD APIs</Description>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
