@@ -22,6 +22,11 @@ namespace EntryApp.Apis.Controllers
             this._logger = loggerFactory.CreateLogger(nameof(EntriesController));
         }
 
+        #region 시험
+        [HttpGet("Test")] // api/Entries/Test
+        public IEnumerable<Entry> Get() => Enumerable.Empty<Entry>();  
+        #endregion
+
         #region 입력
         // 입력
         // POST api/Entries
@@ -129,8 +134,13 @@ namespace EntryApp.Apis.Controllers
         // 수정
         // PUT api/Entries/123
         [HttpPut("{id}")] // @PutMapping
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] Entry dto)
+        public async Task<IActionResult> UpdateAsync([FromRoute] long? id, [FromBody] Entry dto)
         {
+            if (id is null)
+            {
+                return NotFound(); 
+            }
+
             if (dto == null)
             {
                 return BadRequest();
@@ -142,7 +152,7 @@ namespace EntryApp.Apis.Controllers
             }
 
             // <>
-            var origin = await _repository.GetByIdAsync(id);
+            var origin = await _repository.GetByIdAsync(id ?? default);
             if (origin != null)
             {
                 origin.Name = dto.Name;
@@ -154,7 +164,7 @@ namespace EntryApp.Apis.Controllers
 
             try
             {
-                origin.Id = id;
+                origin.Id = id ?? default;
                 var status = await _repository.UpdateAsync(origin);
                 if (!status)
                 {
@@ -196,7 +206,7 @@ namespace EntryApp.Apis.Controllers
         }
         #endregion
 
-        #region 페이징
+        #region 검색
         // 페이징
         // GET api/Entries/Page/1/10
         [HttpGet("Page/{pageNumber:int}/{pageSize:int}")]
