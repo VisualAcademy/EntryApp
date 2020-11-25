@@ -17,6 +17,7 @@ namespace EntryApp.Apis
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            // https://docs.microsoft.com/ko-kr/aspnet/core/release-notes/aspnetcore-5.0?view=aspnetcore-5.0#openapi-specification-on-by-default
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EntryApp.Apis", Version = "v1" });
