@@ -135,7 +135,7 @@ namespace EntryApp.Apis.Controllers
         // 수정
         // PUT api/Entries/123
         [HttpPut("{id}")] // @PutMapping
-        public async Task<IActionResult> UpdateAsync([FromRoute] long? id, [FromBody] EntryDto dto)
+        public async Task<IActionResult> UpdateAsync([FromRoute] long? id, [FromBody] Entry dto)
         {
             if (id is null)
             {
@@ -243,5 +243,5 @@ namespace EntryApp.Apis.Controllers
 
     // C# 9 레코드 형식으로 모델 바인딩 및 유효성 검사
     // https://docs.microsoft.com/ko-kr/aspnet/core/release-notes/aspnetcore-5.0?view=aspnetcore-5.0#model-binding-and-validation-with-c-9-record-types
-    public record EntryDto(long Id, [Required] string Name, [Required] string Title, string Content);
+    //public record EntryDto(long Id, [Required] string Name, [Required] string Title, string Content);
 }
