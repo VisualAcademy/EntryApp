@@ -8,7 +8,7 @@
     <Product>Dul.EntryApp.Models</Product>
     <PackageProjectUrl>https://github.com/VisualAcademy/EntryApp</PackageProjectUrl>
     <Description>EntryApp.Models CRUD APIs</Description>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
