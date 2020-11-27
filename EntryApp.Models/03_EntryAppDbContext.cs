@@ -8,7 +8,7 @@ namespace EntryApp.Models
     /// </summary>
     public class EntryAppDbContext : DbContext
     {
-        // PM> Install-Package Microsoft.EntityFrameworkCore.SqlServer
+        // PM> Install-Package Microsoft.EntityFrameworkCore.SqlServer -version 3.1.10
         // PM> Install-Package Microsoft.Data.SqlClient
         // PM> Install-Package System.Configuration.ConfigurationManager
         //// PM> Install-Package Microsoft.EntityFrameworkCore
