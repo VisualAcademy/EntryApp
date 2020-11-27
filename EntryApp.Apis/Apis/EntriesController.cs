@@ -24,8 +24,8 @@ namespace EntryApp.Apis.Controllers
         }
 
         #region 시험
-        [HttpGet("Test")] // api/Entries/Test
-        public IEnumerable<Entry> Get() => Enumerable.Empty<Entry>();  
+        [HttpGet("[action]")] // api/Entries/Test
+        public IEnumerable<Entry> Test() => Enumerable.Empty<Entry>();  
         #endregion
 
         #region 입력
